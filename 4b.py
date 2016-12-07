@@ -1,33 +1,37 @@
 import numpy as np
 
+n = 1000000
 radius = np.random.randint(1,100)
 
-# No. of points in an 2r*2r square
-n = 1000000
-
 """
-Creating a square of side 2r.
+Creating the points that lie on the circumference of a circle.
+Assuming the circle to be centered at (0,0)	
 """
-def Points(r,n):
+def Circle(r,n):
 
-	x = np.random.uniform(-r,r,size = n)
-	y = np.random.uniform(-r,r,size = n)
+	cumsum = np.cumsum(np.ones((n,1)))-1
+	x = np.cos(cumsum*2*np.pi/n)*r
+	y = np.sin(cumsum*2*np.pi/n)*r
 
 	return x, y
 
-x, y = Points(radius,1000000)
+#Creating a random circle with center (0,0)
+x, y = Circle(radius,n)
 
-# Finding the location of points which are outside the circle and deleteing them.
-outside = np.where(np.sqrt(np.square(x) + np.square(y))>radius)
+#length of an equilateral triangle inscribed in a circle.
+side = radius*np.sqrt(3)
 
-x = np.delete(x,outside)
-y = np.delete(y,outside)
+sims = 10000000
+#Randomizing points on the circle. Performing the same randomization on the x and y of one point.
+rand1 = np.random.choice(x.size,size = (sims))
+rand2 = np.random.choice(x.size,size = (sims))
 
-# The distance of each point from the center. If <r/2, then the chord will be longer.
-dist = np.sqrt(np.square(x)+np.square(y))
+p1x = x[rand1]
+p1y = y[rand1]
+p2x = x[rand2]
+p2y = y[rand2]
 
-sims = 100000000
-# Choosing a few random points in the circle. More precisely, their distance from the centre
-rand_dist = np.random.choice(dist,size = (sims,))
+#Finding the length of each random chord.
+length = np.sqrt(np.square(p1x-p2x)+np.square(p1y-p2y))
 
-print("The answer to 4.b is:",np.sum(rand_dist<radius/2)/sims)
+print("The answer to part 4.a is:", np.sum(length>side)/sims)
